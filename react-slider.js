@@ -662,13 +662,16 @@
       return parseFloat(alignValue.toFixed(5));
     },
 
-    _renderHandle: function (style, child, i) {
+    _renderHandle: function (style, child, i, text) {
       var className = this.props.handleClassName + ' ' +
         (this.props.handleClassName + '-' + i) + ' ' +
         (this.state.index === i ? this.props.handleActiveClassName : '');
-
+      
       return (
         React.createElement('div', {
+          key: 'handles' + i
+        }, [
+          React.createElement('div', {
             ref: 'handle' + i,
             key: 'handle' + i,
             className: className,
@@ -677,13 +680,18 @@
             onTouchStart: this._createOnTouchStart(i)
           },
           child
-        )
+          ),
+          React.createElement('div', {
+            style: style,
+            key: 'handle-' + i,
+          }, text)
+        ])
+        
       );
     },
 
-    _renderHandles: function (offset) {
+    _renderHandles: function (offset,values) {
       var length = offset.length;
-
       var styles = this.tempArray;
       for (var i = 0; i < length; i++) {
         styles[i] = this._buildHandleStyle(offset[i], i);
@@ -697,19 +705,23 @@
         });
       } else {
         for (i = 0; i < length; i++) {
-          res[i] = renderHandle(styles[i], null, i);
+          res[i] = renderHandle(styles[i], null, i, values[i]);
         }
       }
       return res;
     },
 
     _renderBar: function (i, offsetFrom, offsetTo) {
+      var offset = 12
+      if(i == 0) offset = 0
+      else if(i == 1) offset = -4
+      
       return (
         React.createElement('div', {
           key: 'bar' + i,
           ref: 'bar' + i,
           className: this.props.barClassName + ' ' + this.props.barClassName + '-' + i,
-          style: this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)
+          style: this._buildBarStyle(offsetFrom + offset, this.state.upperBound - offsetTo)
         })
       );
     },
@@ -772,7 +784,7 @@
       }
 
       var bars = props.withBars ? this._renderBars(offset) : null;
-      var handles = this._renderHandles(offset);
+      var handles = this._renderHandles(offset, value);
 
       return (
         React.createElement('div', {
