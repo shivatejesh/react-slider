@@ -327,7 +327,7 @@
       var style = {
         position: 'absolute',
         willChange: this.state.index >= 0 ? this._posMinKey() : '',
-        zIndex: this.state.zIndices.indexOf(i) + 1
+        // zIndex: this.state.zIndices.indexOf(i) + 1
       };
       style[this._posMinKey()] = offset + 'px';
       return style;
